@@ -7,6 +7,55 @@ import { enforceTdd } from '../../rules/enforce-tdd.js'
 import { forbidCommandPattern } from '../../rules/forbid-command-pattern.js'
 
 describe('Devin policy dispatch', () => {
+  it('records prompts and completed results without evaluating authorization rules', async () => {
+    const fixture = await createFixture({})
+    try {
+      const loadConfig = () =>
+        Promise.resolve({
+          rules: [
+            () => {
+              throw new Error('Only proposed actions can be authorized')
+            },
+          ],
+        })
+      const base = { cwd: fixture.path, session_id: 'record-only' }
+      for (const payload of [
+        {
+          ...base,
+          hook_event_name: 'UserPromptSubmit',
+          prompt: 'Check the cart',
+        },
+        {
+          ...base,
+          hook_event_name: 'PostToolUse',
+          tool_name: 'exec',
+          tool_input: { command: 'python -m unittest' },
+          tool_use_id: 'red',
+          tool_response: {
+            success: true,
+            output: 'AssertionError: 0 != 30',
+            error: null,
+          },
+        },
+      ]) {
+        const result = await run(JSON.stringify(payload), {
+          vendor: 'devin',
+          loadConfig,
+        })
+        expect(result.response).toBe('')
+        expect(result.trace).toEqual([])
+      }
+      const { readTranscript } = await import('./history.js')
+      const history = await readTranscript(
+        `${fixture.path}/.probity/devin/record-only.jsonl`,
+      )
+      expect(history).toHaveLength(2)
+      expect(history[1]).toMatchObject({ output: 'AssertionError: 0 != 30' })
+    } finally {
+      await fixture.rm()
+    }
+  })
+
   it('blocks a native exec command and allows a harmless command', async () => {
     const fixture = await createFixture({})
     try {
