@@ -30,7 +30,7 @@ export async function parseAction(
   const d = parsed.data
   // Recording hooks do not authorize or evaluate an already completed action.
   if (d.hook_event_name && d.hook_event_name !== 'PreToolUse') {
-    return { ok: true, actions: [{ kind: 'command', command: '' }] }
+    return { ok: true, actions: [] }
   }
   if (!d.tool_name) return { ok: false, reason: 'Devin: missing tool_name' }
   const cwd = d.cwd ?? process.env.DEVIN_PROJECT_DIR ?? process.cwd()

@@ -125,7 +125,7 @@ object directly, without an outer `hooks` key:
   ],
   "PreToolUse": [
     {
-      "matcher": "",
+      "matcher": "^(exec|write|edit|apply_patch|notebook_edit)$",
       "hooks": [
         {
           "type": "command",
@@ -157,7 +157,13 @@ globally. Use `--config /absolute/path/probity.config.ts` on all three entries i
 hook's working directory does not discover the intended config. Check `/hooks`.
 
 PreToolUse evaluates proposed actions; the other two hooks record prompts and
-completed tool results. All three are needed for history-aware rules. The observed
+completed tool results without evaluating authorization rules. The PreToolUse
+matcher covers the native command/file tools supported by this adapter; MCP tools
+are not interpreted as native writes or commands. Keep PostToolUse matching all
+tools so background results and other context remain in history. Recording hooks
+can use a shorter timeout (for example 15 seconds); the pre-action timeout must
+allow the configured AI validator to finish. All three hooks are needed for
+history-aware rules. The observed
 payloads have no native transcript path, so the adapter writes
 `.probity/devin/<session_id>.jsonl` under `DEVIN_PROJECT_DIR` (falling back to the
 process working directory). Keep `.probity/` ignored by Git. These files contain
