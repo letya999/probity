@@ -103,6 +103,10 @@ Further reading: [GitHub Copilot's hooks reference](https://docs.github.com/en/c
 Devin uses native tool names (`exec`, `write`, `edit`, `apply_patch`, and
 `notebook_edit`). Selecting the Claude adapter is not sufficient. Use `--agent devin`.
 
+Install a build containing this adapter: earlier npm releases reject `--agent devin`.
+For a local checkout, build it and replace the hook commands below with
+`node /path/to/probity/dist/bin.js --agent devin` on all three entries.
+
 Create `.devin/hooks.v1.json` in the project root. The file contains the hooks
 object directly, without an outer `hooks` key:
 
