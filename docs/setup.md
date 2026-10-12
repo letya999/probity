@@ -69,7 +69,13 @@ Codex hooks are enabled by default. Add a `PreToolUse` hook in `~/.codex/hooks.j
 }
 ```
 
-Codex's matcher is a regex. `^(Bash|exec|apply_patch|Edit|Write)$` covers shell commands and file modifications: current Codex releases invoke shell commands as `exec` and send file writes as `apply_patch`; `Bash`, `Edit`, and `Write` remain for older releases.
+Codex's matcher is a regex. `^(Bash|exec|apply_patch|Edit|Write)$` covers shell commands and file modifications: Codex may report shell calls as `Bash` or `exec` depending on the release, and sends file writes as `apply_patch`; `Edit`/`Write` remain for older releases.
+
+On Windows, point `commandWindows` at `node` with the installed `bin.js` directly — the npm `probity.cmd` shim can fail to spawn under Codex, in which case the hook silently never runs:
+
+```json
+"commandWindows": "node C:\\Users\\<you>\\AppData\\Roaming\\npm\\node_modules\\@nizos\\probity\\dist\\bin.js --agent codex"
+```
 
 Further reading: [Codex's hooks documentation](https://developers.openai.com/codex/hooks).
 
