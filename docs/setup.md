@@ -56,7 +56,7 @@ Codex hooks are enabled by default. Add a `PreToolUse` hook in `~/.codex/hooks.j
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "^(Bash|apply_patch|Edit|Write)$",
+        "matcher": "^(Bash|exec|apply_patch|Edit|Write)$",
         "hooks": [
           {
             "type": "command",
@@ -69,7 +69,7 @@ Codex hooks are enabled by default. Add a `PreToolUse` hook in `~/.codex/hooks.j
 }
 ```
 
-Codex's matcher is a regex. `^(Bash|apply_patch|Edit|Write)$` covers shell commands and file modifications (Codex sends file writes as `apply_patch`; `Edit`/`Write` are matcher synonyms documented by Codex).
+Codex's matcher is a regex. `^(Bash|exec|apply_patch|Edit|Write)$` covers shell commands and file modifications: current Codex releases invoke shell commands as `exec` and send file writes as `apply_patch`; `Bash`, `Edit`, and `Write` remain for older releases.
 
 Further reading: [Codex's hooks documentation](https://developers.openai.com/codex/hooks).
 
